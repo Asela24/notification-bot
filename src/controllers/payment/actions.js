@@ -31,9 +31,9 @@ const paymentAction = async ({ ctx, sendProof }) => {
       await sendProof();
 
       ctx.reply(
-        `Спасибо за оплату. Время след оплаты -${formatDateToDDMMYY(
+        `Спасибо за оплату. Время след оплаты - ${formatDateToDDMMYY(
           nextPaymentDate
-        )}. В день оплаты вам придет напоминание. В настройках меню можно отключить оповещения.`
+        )}. В день оплаты вам придет напоминание.`
       );
       setUpNotification({
         nextPaymentDate: nextPaymentDate,

@@ -18,26 +18,36 @@ const getResultInfo = async (ctx) => {
 };
 
 const setUpNotification = ({ nextPaymentDate, chatId, text, userId }) => {
-  const nextPaymentTime = nextPaymentDate - new Date();
+  const nextPaymentTime = nextPaymentDate.getTime() - new Date().getTime();
+  const MAX_TIMEOUT = 2147483647;
 
-  setTimeout(async () => {
-    await User.updateOne(
-      {
-        _id: userId,
-      },
-      {
-        isPeriodPaid: false,
-      }
-    );
-    telegramBot.sendMessage(chatId, text, {
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: "Оплатить", callback_data: "payment_button_clicked" }],
-        ],
-      },
-    });
-    setUpDailyReminder({ id: userId, chatId: chatId });
-  }, nextPaymentTime); // use next PaymentTime
+  if (nextPaymentTime <= 0) {
+    console.error("Error: nextPaymentDate must be in the future!");
+    return;
+  }
+
+  const scheduleNotification = (delay) => {
+    if (delay > MAX_TIMEOUT) {
+      console.log("Delay too long, scheduling intermediate timeout...");
+      setTimeout(() => scheduleNotification(delay - MAX_TIMEOUT), MAX_TIMEOUT);
+    } else {
+      setTimeout(async () => {
+        await User.updateOne({ _id: userId }, { isPeriodPaid: false });
+
+        telegramBot.sendMessage(chatId, text, {
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: "Оплатить", callback_data: "payment_button_clicked" }],
+            ],
+          },
+        });
+
+        setUpDailyReminder({ id: userId, chatId });
+      }, delay);
+    }
+  };
+
+  scheduleNotification(nextPaymentTime);
 };
 
 const setUpDailyReminder = async ({ id, chatId }) => {

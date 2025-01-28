@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:dev": "dotenv -e .env.dev -- node bot.js",
-    "start:prod": "ENV=production node bot.js",
+    "start:prod": "dotenv -e .env.production node bot.js",
     "db": "sudo systemctl start mongod"
   },
   "author": "asela24",
