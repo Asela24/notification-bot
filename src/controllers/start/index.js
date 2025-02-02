@@ -14,7 +14,7 @@ nicknameScene.enter(async (ctx) => {
   if (user) {
     const lastPaymentDate = user.lastPaymentDate;
     await ctx.reply(
-      `Привет с возвращением! \n${
+      `Привет. C возвращением! \n${
         lastPaymentDate
           ? `Последняя оплата была произведена ${formatDateToDDMMYY(
               lastPaymentDate
@@ -32,7 +32,7 @@ nicknameScene.enter(async (ctx) => {
 nicknameScene.on("text", (ctx) => {
   const nickname = ctx.message.text;
   ctx.session.nickname = nickname;
-  ctx.reply(`Спасибо! Теперь введите ваше имя:`);
+  ctx.reply(`Спасибо! Теперь введите ваше имя и отчество:`);
   ctx.scene.enter("nameScene");
 });
 
