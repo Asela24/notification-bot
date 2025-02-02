@@ -21,6 +21,7 @@ const {
 const { getUser } = require("./src/utils/get-user");
 const { formatDateToDDMMYY } = require("./src/utils/get-date");
 const { mainKeyboard } = require("./src/utils/main-keyboard");
+const { setupNotificationOnStartAction } = require('./src/controllers/start/actions')
 
 const uri = process.env.DATABASE_URL;
 
@@ -103,7 +104,9 @@ mongoose.connection.on("open", () => {
     ctx.reply("По всем вопросам и проблемам, смело пишите @Maksim99745");
   });
 
-  bot.launch();
+  bot.launch(async () => {
+    setupNotificationOnStartAction()
+  });
 
   bot.on("callback_query", (ctx) => {
     if (ctx.callbackQuery.data === "payment_button_clicked") {
